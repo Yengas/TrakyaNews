@@ -3,7 +3,7 @@ import { createNewsDetailLoadedAction, createNewsSimpleLoadedAction } from "../.
 
 describe('news actions', () => {
   const sampleNewsSimple = { 'h-test': { id: 'h-test' }};
-  const sampleNewsDetailed = { 'h-test': { id: 'h-test', description: 'test' }};
+  const sampleNewsDetailed = { id: 'h-test', description: 'test' };
 
   it('should creaete news load action without problems', () => {
     const expectedAction = { type: LOAD_NEWS_SIMPLE, news: sampleNewsSimple };

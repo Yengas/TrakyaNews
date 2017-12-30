@@ -5,5 +5,5 @@ export function createNewsSimpleLoadedAction(news){
 }
 
 export function createNewsDetailLoadedAction(news){
-  return { type: LOAD_NEWS_DETAILED, news };
+  return { type: LOAD_NEWS_DETAILED, news }
 }

@@ -5,5 +5,5 @@ export function createNoticesLoadedSimpleAction(notices){
 }
 
 export function createNoticeLoadedDeatiledAction(notice){
-  return { type: LOAD_NOTICE_DETAILED, notice };
+  return { type: LOAD_NOTICE_DETAILED, notice }
 }

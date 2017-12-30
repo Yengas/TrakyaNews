@@ -3,7 +3,7 @@ import { createNoticeLoadedDeatiledAction, createNoticesLoadedSimpleAction } fro
 
 describe('notices actions', () => {
   const sampleNoticesSimple = { 'd-test': { id: 'd-test' }};
-  const sampleNoticeDetailed = { 'd-test': { id: 'd-test', description: 'test' }};
+  const sampleNoticeDetailed = { id: 'd-test', description: 'test' };
 
   it('should creaete news load action without problems', () => {
     const expectedAction = { type: LOAD_NOTICES_SIMPLE, notices: sampleNoticesSimple };
