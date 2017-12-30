@@ -1,7 +1,7 @@
 import { LOAD_NOTICE_DETAILED, LOAD_NOTICES_SIMPLE } from "../../src/actions/types";
 import { createNoticeLoadedDeatiledAction, createNoticesLoadedSimpleAction } from "../../src/actions";
 
-describe('news actions', () => {
+describe('notices actions', () => {
   const sampleNoticesSimple = { 'd-test': { id: 'd-test' }};
   const sampleNoticeDetailed = { 'd-test': { id: 'd-test', description: 'test' }};
 
