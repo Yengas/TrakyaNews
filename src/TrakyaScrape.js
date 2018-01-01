@@ -47,4 +47,12 @@ export default class TrakyaScrape{
       .mergeMap(parseNewsPage)
       .map(createSimpleIdGenerator('h-'));
   }
+
+  notices(page){
+    const url = createURL(this.domain, `/news_cats/duyurular/${page}`);
+
+    return getDocumentFromURL(this.ajax, url)
+      .mergeMap(parseNewsPage)
+      .map(createSimpleIdGenerator('d-'));
+  }
 }
