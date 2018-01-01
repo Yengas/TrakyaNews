@@ -1,5 +1,5 @@
-import { LOAD_NOTICE_DETAILED, LOAD_NOTICES_SIMPLE } from "../../src/actions/types";
-import { createNoticeLoadedDeatiledAction, createNoticesLoadedSimpleAction } from "../../src/actions";
+import { LOAD_NOTICE_DETAILED, LOAD_NOTICES_SIMPLE } from "../../../src/actions/types";
+import { createNoticeLoadedDeatiledAction, createNoticesLoadedSimpleAction } from "../../../src/actions/index";
 
 describe('notices actions', () => {
   const sampleNoticesSimple = { 'd-test': { id: 'd-test' }};

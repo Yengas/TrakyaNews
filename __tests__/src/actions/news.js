@@ -1,5 +1,5 @@
-import { LOAD_NEWS_DETAILED, LOAD_NEWS_SIMPLE } from "../../src/actions/types";
-import { createNewsDetailLoadedAction, createNewsSimpleLoadedAction } from "../../src/actions";
+import { LOAD_NEWS_DETAILED, LOAD_NEWS_SIMPLE } from "../../../src/actions/types";
+import { createNewsDetailLoadedAction, createNewsSimpleLoadedAction } from "../../../src/actions/index";
 
 describe('news actions', () => {
   const sampleNewsSimple = { 'h-test': { id: 'h-test' }};

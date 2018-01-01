@@ -1,5 +1,5 @@
-import NoticesReducer from "../../src/reducers/NoticesReducer";
-import { LOAD_NOTICE_DETAILED, LOAD_NOTICES_SIMPLE } from "../../src/actions/types";
+import NoticesReducer from "../../../src/reducers/NoticesReducer";
+import { LOAD_NOTICE_DETAILED, LOAD_NOTICES_SIMPLE } from "../../../src/actions/types";
 
 describe('notices reducers', () => {
   const DEFAULT_STATE = {};

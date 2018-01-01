@@ -1,5 +1,5 @@
-import NewsReducer from "../../src/reducers/NewsReducer";
-import { LOAD_NEWS_DETAILED, LOAD_NEWS_SIMPLE } from "../../src/actions/types";
+import NewsReducer from "../../../src/reducers/NewsReducer";
+import { LOAD_NEWS_DETAILED, LOAD_NEWS_SIMPLE } from "../../../src/actions/types";
 
 describe('news reducers', () => {
   const DEFAULT_STATE = {};

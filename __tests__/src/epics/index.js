@@ -1,12 +1,12 @@
 import configureMockStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
-import combinedEpics from '../../src/epics/index';
-import { LISTING_LOADING_ENDED, LISTING_LOADING_START } from "../../src/actions/types";
+import combinedEpics from '../../../src/epics/index';
+import { LISTING_LOADING_ENDED, LISTING_LOADING_START } from "../../../src/actions/types";
 import {
   createNewsDetailLoadedAction, createNewsSimpleLoadedAction, createNoticeLoadedDeatiledAction,
   createNoticesLoadedSimpleAction, createPageChangeAction,
   createPageLoadingAction
-} from "../../src/actions";
+} from "../../../src/actions/index";
 
 const epicMiddleware = createEpicMiddleware(combinedEpics);
 const mockStore = configureMockStore([ epicMiddleware ]);
