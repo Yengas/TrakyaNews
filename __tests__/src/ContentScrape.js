@@ -12,6 +12,21 @@ function mockResponse(domain, testObject){
     .reply(200, testObject.content);
 }
 
+function simpleGetRequestTestGenerator(observableGenerator, testObject){
+  return (done) => {
+    if(MOCK_REQUESTS) mockResponse(TEST_SITE_DOMAIN, testObject);
+
+    observableGenerator().toArray().forEach((result) => {
+      try{
+        expect(result).toEqual(testObject.response);
+        done();
+      }catch(ex){
+        done(ex);
+      }
+    });
+  };
+}
+
 describe('scraping of content', () => {
   let scraper;
 
@@ -19,16 +34,5 @@ describe('scraping of content', () => {
     scraper = new TrakyaScrape(TEST_SITE_DOMAIN, request);
   });
 
-  it('should scrape news page 1', (done) => {
-    if(MOCK_REQUESTS) mockResponse(TEST_SITE_DOMAIN, NEWS_PAGE_1);
-
-    scraper.news(1).forEach((result) => {
-      try{
-        expect(result).toEqual(NEWS_PAGE_1.response);
-        done();
-      }catch(ex){
-        done(ex);
-      }
-    });
-  });
+  it('should scrape news page 1', simpleGetRequestTestGenerator(() => scraper.news(1), NEWS_PAGE_1));
 });

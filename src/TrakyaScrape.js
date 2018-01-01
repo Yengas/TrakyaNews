@@ -24,9 +24,10 @@ function parseNewsItem(li){
 }
 
 function parseNewsPage($){
-  return $("ul.news_list > li")
+  // TODO: should move parsing of items into observable...
+  return Observable.from($("ul.news_list > li")
     .map(function(){ return parseNewsItem($(this)); })
-    .toArray();
+    .toArray());
 }
 
 function createSimpleIdGenerator(prefix){
@@ -43,7 +44,7 @@ export default class TrakyaScrape{
     const url = createURL(this.domain, `/news_cats/haberler/${page}`);
 
     return getDocumentFromURL(this.ajax, url)
-      .map(parseNewsPage)
-      .map((news) => news.map(createSimpleIdGenerator('h-')));
+      .mergeMap(parseNewsPage)
+      .map(createSimpleIdGenerator('h-'));
   }
 }
