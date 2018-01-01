@@ -1,6 +1,6 @@
 import TrakyaScrape from "../../src/TrakyaScrape";
 import { request } from 'universal-rxjs-ajax'
-import { NEWS_PAGE_1, TEST_SITE_DOMAIN } from '../data/html'
+import { NEWS_PAGE_1, NEWS_PAGE_3, TEST_SITE_DOMAIN } from '../data/html'
 import nock from "nock";
 
 const MOCK_REQUESTS = true;
@@ -34,5 +34,10 @@ describe('scraping of content', () => {
     scraper = new TrakyaScrape(TEST_SITE_DOMAIN, request);
   });
 
+  beforeEach(() => {
+    nock.cleanAll();
+  });
+
   it('should scrape news page 1', simpleGetRequestTestGenerator(() => scraper.news(1), NEWS_PAGE_1));
+  it('should scrape news page 3', simpleGetRequestTestGenerator(() => scraper.news(3), NEWS_PAGE_3));
 });
