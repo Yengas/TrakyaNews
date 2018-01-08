@@ -7,7 +7,6 @@ import {
 } from '../data/html'
 import nock from "nock";
 
-const MOCK_REQUESTS = true;
 jest.unmock('nock');
 
 function mockResponse(domain, testObject){
@@ -18,7 +17,7 @@ function mockResponse(domain, testObject){
 
 function simpleGetRequestTestGenerator(observableGenerator, testObject){
   return (done) => {
-    if(MOCK_REQUESTS) mockResponse(TEST_SITE_DOMAIN, testObject);
+    mockResponse(TEST_SITE_DOMAIN, testObject);
 
     try{
       observableGenerator().toArray().forEach((result) =>{
