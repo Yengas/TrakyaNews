@@ -185,7 +185,7 @@ export default class TrakyaScrape{
   }
 
   single(path){
-    const url = createURL(this.domain, path);
+    const url = path.startsWith("http") ? path : createURL(this.domain, path);
 
     return getDocumentFromURL(this.ajax, url)
       .map(parseSingleContent);
