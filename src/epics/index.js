@@ -30,6 +30,7 @@ const pageLoadingEndedEpic = (action$) =>
   );
 
 function createDetailLoadingEpic(requestSingleItem, concurrency, type, itemsExtractor, actionCreator){
+  // TODO: get the store, make sure the current page doesn't change while doing these requests.
   return (action$) =>
     action$.pipe(
       ofType(type),
