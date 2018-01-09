@@ -1,6 +1,6 @@
 import { ofType, combineEpics } from 'redux-observable';
 import Rx from 'rxjs/Rx';
-import { map, mapTo, flatMap } from 'rxjs/operators';
+import { map, mapTo, flatMap, takeUntil } from 'rxjs/operators';
 import { LISTING_PAGE_CHANGED, LOAD_NEWS_SIMPLE, LOAD_NOTICES_SIMPLE } from "../actions/types";
 import {
   createNewsDetailLoadedAction, createNewsSimpleLoadedAction, createNoticeLoadedDeatiledAction,
@@ -13,12 +13,12 @@ const createPageLoadingStartEpic = (newsRequest, noticesRequest) => (action$) =>
     ofType(LISTING_PAGE_CHANGED),
     flatMap(({ page }) => {
       // A stream of page changes where the page id doesn't equal to this one. Meaning the page has changed.
-      const pageChangedFromThis = action$.ofType(LISTING_PAGE_CHANGED).filter(({ newPage }) => newPage !== page);
+      const pageChanged$ = action$.ofType(LISTING_PAGE_CHANGED).filter(({ page: newPage }) => newPage !== page);
 
       return Rx.Observable.merge(
         Rx.Observable.of(createPageLoadingAction(true)),
-        newsRequest(page).toArray().takeUntil(pageChangedFromThis).map(news => createNewsSimpleLoadedAction(news)),
-        noticesRequest(page).toArray().takeUntil(pageChangedFromThis).map(notices => createNoticesLoadedSimpleAction(notices))
+        newsRequest(page).toArray().takeUntil(pageChanged$).map(news => createNewsSimpleLoadedAction(news)),
+        noticesRequest(page).toArray().takeUntil(pageChanged$).map(notices => createNoticesLoadedSimpleAction(notices))
       );
     })
   );
@@ -30,19 +30,23 @@ const pageLoadingEndedEpic = (action$) =>
   );
 
 function createDetailLoadingEpic(requestSingleItem, concurrency, type, itemsExtractor, actionCreator){
-  // TODO: get the store, make sure the current page doesn't change while doing these requests.
-  return (action$) =>
-    action$.pipe(
+  return (action$, store) => {
+    const pageChanged$ = action$.ofType(LISTING_PAGE_CHANGED)
+      .filter(({ page: newPage }) => newPage !== store.getState().listing.page);
+
+    return action$.pipe(
       ofType(type),
       flatMap((action) =>
         Rx.Observable
           .from(itemsExtractor(action))
           .pipe(
             flatMap(requestSingleItem, undefined, concurrency),
+            takeUntil(pageChanged$),
             map(actionCreator)
           )
       )
     );
+  };
 }
 
 export const startNewsDetailLoadingEpic = (requestSingleItem, concurrency) =>
