@@ -1,63 +1,83 @@
 import { ofType, combineEpics } from 'redux-observable';
 import Rx from 'rxjs/Rx';
-import { map, mapTo, flatMap, takeUntil } from 'rxjs/operators';
-import { LISTING_PAGE_CHANGED, LOAD_NEWS_SIMPLE, LOAD_NOTICES_SIMPLE } from "../actions/types";
+import { map, flatMap, takeUntil, filter } from 'rxjs/operators';
 import {
-  createNewsDetailLoadedAction, createNewsSimpleLoadedAction, createNoticeLoadedDeatiledAction,
+  LISTING_PAGE_CHANGED, LOAD_NEWS_SIMPLE, LOAD_NOTICES_SIMPLE, LOADING_NEWS_SIMPLE,
+  LOADING_NOTICES_SIMPLE
+} from "../actions/types";
+import {
+  createNewsDetailLoadedAction, createNewsSimpleLoadedAction, createNewsSimpleLoadingAction,
+  createNoticeLoadedDeatiledAction, createNoticesLoadingSimpleAction,
   createNoticesLoadedSimpleAction,
-  createPageLoadingAction
+  createPageLoadingAction, createNoticesSimpleFailedAction, createNewsSimpleFailedAction,
+  createNoticeDetailedFailedAction, createNewsDetailedFailedAction
 } from "../actions";
 
-const createPageLoadingStartEpic = (newsRequest, noticesRequest) => (action$) =>
+export const createPageLoadingStartEpic = (action$, store) =>
   action$.pipe(
     ofType(LISTING_PAGE_CHANGED),
-    flatMap(({ page }) => {
-      // A stream of page changes where the page id doesn't equal to this one. Meaning the page has changed.
-      const pageChanged$ = action$.ofType(LISTING_PAGE_CHANGED).filter(({ page: newPage }) => newPage !== page);
-
-      return Rx.Observable.merge(
-        Rx.Observable.of(createPageLoadingAction(true)),
-        newsRequest(page).toArray().takeUntil(pageChanged$).map(news => createNewsSimpleLoadedAction(news)),
-        noticesRequest(page).toArray().takeUntil(pageChanged$).map(notices => createNoticesLoadedSimpleAction(notices))
-      );
-    })
+    // Check if the page really changed or is it the same with the store
+    filter(({ page: newPage }) => newPage !== ((store.getState().listing || {}).page || 0)),
+    flatMap(({ page }) => Rx.Observable.from([ createNewsSimpleLoadingAction(page), createNoticesLoadingSimpleAction(page) ]))
   );
 
-const pageLoadingEndedEpic = (action$) =>
+export const createNewsLoadingStartEpic = (newsRequest) => (action$) =>
   action$.pipe(
-    ofType(LOAD_NEWS_SIMPLE, LOAD_NOTICES_SIMPLE),
-    mapTo(createPageLoadingAction(false))
+    ofType(LOADING_NEWS_SIMPLE),
+    flatMap(({ page }) =>
+      newsRequest(page).toArray()
+          .takeUntil(action$.ofType(LOADING_NEWS_SIMPLE))
+          .map(news => createNewsSimpleLoadedAction(news))
+          .catch((e) => Rx.Observable.of(createNewsSimpleFailedAction(e.message)))
+    )
   );
 
-function createDetailLoadingEpic(requestSingleItem, concurrency, type, itemsExtractor, actionCreator){
-  return (action$, store) => {
-    const pageChanged$ = action$.ofType(LISTING_PAGE_CHANGED)
-      .filter(({ page: newPage }) => newPage !== store.getState().listing.page);
+export const createNoticesLoadingStartEpic = (noticesRequest) => (action$) =>
+  action$.pipe(
+    ofType(LOADING_NOTICES_SIMPLE),
+    flatMap(({ page }) =>
+      noticesRequest(page).toArray()
+        .takeUntil(action$.ofType(LOADING_NOTICES_SIMPLE))
+        .map(notices => createNoticesLoadedSimpleAction(notices))
+        .catch((e) => Rx.Observable.of(createNoticesSimpleFailedAction(e.message))))
+  );
 
-    return action$.pipe(
+export function createDetailLoadingEpic(requestSingleItem, concurrency, type, itemsExtractor, actionCreator, errorCreator, takeUntilActionType){
+  return (action$, store) =>
+    action$.pipe(
       ofType(type),
       flatMap((action) =>
         Rx.Observable
           .from(itemsExtractor(action))
-          .pipe(
-            flatMap(requestSingleItem, undefined, concurrency),
-            takeUntil(pageChanged$),
-            map(actionCreator)
-          )
+          .flatMap((item) =>
+            // Request single item, and in case error create an error for it.
+            requestSingleItem(item)
+              .map(actionCreator)
+              .catch((e) => Rx.Observable.of(errorCreator(item, e)))
+            , undefined, concurrency)
+          .takeUntil(action$.ofType(takeUntilActionType))
       )
     );
-  };
 }
 
 export const startNewsDetailLoadingEpic = (requestSingleItem, concurrency) =>
-  createDetailLoadingEpic(requestSingleItem, concurrency, LOAD_NEWS_SIMPLE, (action) => action.news, createNewsDetailLoadedAction);
+  createDetailLoadingEpic(
+    requestSingleItem, concurrency, LOAD_NEWS_SIMPLE, (action) => action.news,
+    createNewsDetailLoadedAction, (item, e) => createNewsDetailedFailedAction(item, e.message),
+    LOADING_NEWS_SIMPLE
+  );
 
 export const startNoticesDetailLoadingEpic = (requestSingleItem, concurrency) =>
-  createDetailLoadingEpic(requestSingleItem, concurrency, LOAD_NOTICES_SIMPLE, (action) => action.notices, createNoticeLoadedDeatiledAction);
+  createDetailLoadingEpic(
+    requestSingleItem, concurrency, LOAD_NOTICES_SIMPLE, (action) => action.notices,
+    createNoticeLoadedDeatiledAction, (item, e) => createNoticeDetailedFailedAction(item, e.message),
+    LOADING_NOTICES_SIMPLE
+  );
 
 export default (scraper) => combineEpics(
-  createPageLoadingStartEpic((page) => scraper.news(page), (page) => scraper.notices(page)),
-  pageLoadingEndedEpic,
+  createPageLoadingStartEpic,
+  createNewsLoadingStartEpic((page) => scraper.news(page)),
+  createNoticesLoadingStartEpic((page) => scraper.notices(page)),
   startNewsDetailLoadingEpic((newsItem) => scraper.single(newsItem.href), 3),
   startNoticesDetailLoadingEpic((noticeItem) => scraper.single(noticeItem.href), 5)
 );
