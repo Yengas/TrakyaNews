@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 1,
     marginRight: 2,
-    borderColor: 'blue'
+    borderColor: '#e9e9ef'
   }
 });
 

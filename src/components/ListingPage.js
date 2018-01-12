@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import PageSelection from './PageSelection'
+import PageSelection from './PageSelection';
+import SimpleItem from './SimpleItem';
 
 class ListingPage extends Component{
   render(){
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text>Hello, World!</Text>
+          <SimpleItem
+            title={"Değişik bir şey deniyelim."}
+            date={"27.12.2017"}
+            onClick={() => console.log("Tıklandı!")}
+            isLoading={true} />
         </View>
         <View style={styles.pageNav}>
           <PageSelection min={1} max={6} toShow={5} selected={3} pageChanged={(page) => console.log(page)} />
