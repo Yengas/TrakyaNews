@@ -11,6 +11,7 @@ class ListingPage extends Component{
           <SimpleItem
             title={"Değişik bir şey deniyelim."}
             date={"27.12.2017"}
+            views={1524}
             onClick={() => console.log("Tıklandı!")}
             isLoading={true} />
         </View>
