@@ -1,29 +1,26 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, View, StyleSheet, FlatList } from 'react-native';
 import PageSelection from './PageSelection';
 import SimpleItem from './SimpleItem';
 import LoadedItem from './LoadedItem';
 
+function renderLoadingOverlay(){
+  return (
+    <View style={styles.loadingOverlay}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  );
+}
+
 class ListingPage extends Component{
   render(){
+    const { loading } = this.props;
+
     return (
       <View style={styles.container}>
+        {loading ? renderLoadingOverlay() : null}
         <View style={styles.content}>
-          <LoadedItem
-            title={"Değişik bir şey deniyelim."}
-            date={"27.12.2017"}
-            content={"Bilişim ve Kariyer Günleri 2017 gerçekleştirildi.B.T.B.S. bölümü Bilişim ve İnovasyon Topluluğu (TÜBİT) tarafından 12-13 Aralık 2017 tarihlerinde gerçekleştirilen \"Bilişim & Kariyer Günleri 2017\" yoğun bir katılım ile gerçekleştirildi.Katılımcı ve destekçilerimize teşekkür ederiz.B.T.B.S. Bölüm Başkanlığı"}
-            images={["http://bys.trakya.edu.tr/file/open/63842743", "http://bys.trakya.edu.tr/file/open/68391839", "http://bys.trakya.edu.tr/file/open/90435715", "http://bys.trakya.edu.tr/file/open/21739328", "http://bys.trakya.edu.tr/file/open/55000773", "http://bys.trakya.edu.tr/file/open/31697390", "http://bys.trakya.edu.tr/file/open/45062883", "http://bys.trakya.edu.tr/file/open/43240904"]}
-            files={[{"title":"gib1 (51652).docx","href":"http://bys.trakya.edu.tr/file/download/61512976/","size":"(20.77 KB)"}]}
-            views={1524}
-            onClick={() => console.log("Tıklandı!")}
-            isLoading={true} />
-          <SimpleItem
-            title={"Değişik bir şey deniyelim."}
-            date={"27.12.2017"}
-            views={1524}
-            onClick={() => console.log("Tıklandı!")}
-            isLoading={true} />
+          <FlatList />
         </View>
         <View style={styles.pageNav}>
           <PageSelection min={1} max={6} toShow={5} selected={3} pageChanged={(page) => console.log(page)} />
@@ -35,15 +32,28 @@ class ListingPage extends Component{
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 100
   },
   content: {
+    zIndex: 0,
     flex: 92
   },
   pageNav: {
+    zIndex: 0,
     flex: 8,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    zIndex: 1,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#F5FCFF88',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
