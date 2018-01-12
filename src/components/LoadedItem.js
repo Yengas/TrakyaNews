@@ -54,8 +54,8 @@ const LoadedItem = ({ title, views, date, content, images, files, contentTrim, o
       isLoading={false} onClick={onClick}>
     </SimpleItem>
     { !!content ? renderContentSection(content.substring(0, contentTrim || 300) + (content.length > 300 ? "..." : "")) : null}
-    { !!images ? renderImageSection(images) : null}
-    { !!files ? renderFilesSection(files) : null}
+    { !!images && images.length > 0 ? renderImageSection(images) : null}
+    { !!files && files.length > 0 ? renderFilesSection(files) : null}
   </Card>
 );
 
