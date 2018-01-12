@@ -4,11 +4,15 @@ import { ListItem, Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 function loadingSpinner(){
-  return (<ActivityIndicator color="#222222" size={"small"} />);
+  return (<ActivityIndicator style={{ paddingLeft: 8, paddingRight: 8 }} color="#222222" size={"small"} />);
 }
 
 function errorIcon(){
   return (<Avatar small rounded icon={{ name: 'error' }} />);
+}
+
+function loadedIcon(){
+  return (<Avatar small rounded icon={{ name: 'check' }} />);
 }
 
 function createDateBadge(date){
@@ -29,7 +33,7 @@ function createViewBadge(view){
   );
 }
 
-const SimpleItem = ({ title, date, views, isLoading, onClick }) => {
+const SimpleItem = ({ title, date, views, isLoading, isError, onClick }) => {
   const dateBadge = date ? createDateBadge(date) : null;
   const viewBadge = views ? createViewBadge(views) : null;
 
@@ -47,13 +51,13 @@ const SimpleItem = ({ title, date, views, isLoading, onClick }) => {
       onPress={onClick}
       title={title}
       subtitle={subtitleView}
-      avatar={isLoading ? loadingSpinner() : errorIcon()}/>
+      avatar={isError ? errorIcon() : isLoading ? loadingSpinner() : loadedIcon()}/>
   );
 };
 
 const styles = StyleSheet.create({
   listItemContainerStyle: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   badgeContainerStyle: {
     flexDirection: 'row',
