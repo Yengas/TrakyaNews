@@ -20,7 +20,14 @@ import {
 
 
 function createSimpleItemArray(count, prefix){
-  return Array(count).fill(undefined).map((_, i) => ({ href: `${prefix}-${i + 1}` }));
+  return Array(count).fill(undefined).map((_, i) => ({ id: `${prefix}-${i + 1}` }));
+}
+
+function mapToIdObj(arr){
+  return arr.reduce((curr, i) =>{
+    curr[ i.id ] = i;
+    return curr;
+  }, {});
 }
 
 const trakyaScraper = new (class TestTrakyaScrape{
@@ -71,17 +78,17 @@ describe('epics singular test', () => {
   it('starts loading and loads page news/notices and details according to test scraper.', () => {
     const store = createStoreWithEpic(createCombinedEpics(trakyaScraper));
 
-    const news = createSimpleItemArray(1, 'h');
-    const notices = createSimpleItemArray(1, 'd');
+    const news = mapToIdObj(createSimpleItemArray(1, 'h'));
+    const notices = mapToIdObj(createSimpleItemArray(1, 'd'));
 
     const changeAction = createPageChangeAction(1);
     const actions = [
       // Page change action and loading starts...
       changeAction,
       // News loaded by simple... The news are loaded by their details...
-      createNewsSimpleLoadingAction(1), createNewsSimpleLoadedAction(news), createNewsDetailLoadedAction(news[0]),
+      createNewsSimpleLoadingAction(1), createNewsSimpleLoadedAction(news), createNewsDetailLoadedAction(Object.values(news)[0]),
       // Notice loaded by simple... The notices are loaded by their details...
-      createNoticesLoadingSimpleAction(1), createNoticesLoadedSimpleAction(notices), createNoticeLoadedDeatiledAction(notices[0])
+      createNoticesLoadingSimpleAction(1), createNoticesLoadedSimpleAction(notices), createNoticeLoadedDeatiledAction(Object.values(notices)[0])
     ];
 
     store.dispatch(changeAction);
@@ -122,10 +129,12 @@ describe('epics singular test', () => {
   }
 
   it('handles news detail loading errors gracefully', () => {
-    const news = createSimpleItemArray(2, 'h');
+    const news = mapToIdObj(createSimpleItemArray(2, 'h'));
+    const newsValues = Object.values(news);
+
     const store = createStoreWithEpic(
       startNewsDetailLoadingEpic((item) =>
-        item === news[0] ?
+        item === newsValues[0] ?
           Rx.Observable.throw(new Error("Test Error"))
         :
           trakyaScraper.single(item.href))
@@ -136,8 +145,8 @@ describe('epics singular test', () => {
 
     expect(store.getActions()).toEqual([
       loadNewsAction,
-      createNewsDetailedFailedAction(news[0], "Test Error"),
-      createNewsDetailLoadedAction(news[1])
+      createNewsDetailedFailedAction(newsValues[0], "Test Error"),
+      createNewsDetailLoadedAction(newsValues[1])
     ]);
   });
 
@@ -166,11 +175,11 @@ describe('epics singular test', () => {
       createNewsLoadingStartEpic((page) => trakyaScraper.news(page)),
       startNewsDetailLoadingEpic((item) => trakyaScraper.single(item.href), 1)
     ));
-    const news = createSimpleItemArray(3, 'h');
+    const news = mapToIdObj(createSimpleItemArray(3, 'h'));
 
     const loadingAction = createNewsSimpleLoadingAction(3);
     const newsLoadAction = createNewsSimpleLoadedAction(news);
-    const detailLoadAction = news.map(createNewsDetailLoadedAction);
+    const detailLoadAction = Object.values(news).map(createNewsDetailLoadedAction);
 
     store.dispatch(loadingAction);
 
@@ -186,10 +195,10 @@ describe('epics singular test', () => {
       createNoticesLoadingStartEpic((page) => trakyaScraper.notices(page)),
       startNoticesDetailLoadingEpic((item) => trakyaScraper.single(item.href), 1)
     ));
-    const notices = createSimpleItemArray(3, 'd');
+    const notices = mapToIdObj(createSimpleItemArray(3, 'd'));
     const loadingAction = createNoticesLoadingSimpleAction(3);
     const noticesLoadAction = createNoticesLoadedSimpleAction(notices);
-    const detailLoadAction = notices.map(createNoticeLoadedDeatiledAction);
+    const detailLoadAction = Object.values(notices).map(createNoticeLoadedDeatiledAction);
 
     store.dispatch(loadingAction);
 
