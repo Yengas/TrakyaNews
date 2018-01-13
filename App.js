@@ -24,7 +24,8 @@ export default class App extends Component<{}> {
           'd-yemek-yardimi-hakkinda': { thumb: 'yemek-yardimi-hakkinda', href: 'http://kycubyo.trakya.edu.tr/news/yemek-yardimi-hakkinda', title: 'YEMEK YARDIMI HAKKINDA', date: '01.02.2017', id: 'd-yemek-yardimi-hakkinda', detail: { failed: true } },
         }
       },
-      listing: { page: 1 }
+      listing: { page: 1 },
+      details: { id: 'd-ders-programina-dersliklerin-ve-laboratuvarlarin-eklenmis-hali-' }
     };
     const epicMiddleware = createEpicMiddleware(epics);
     const store = createStore(reducers, initialState, composeEnhancers(applyMiddleware(epicMiddleware)));

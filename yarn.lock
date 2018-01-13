@@ -2129,6 +2129,10 @@ image-size@^0.6.0:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.6.2.tgz#8ee316d4298b028b965091b673d5f1537adee5b4"
 
+immutable@^3.8.1:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
+
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -3707,6 +3711,13 @@ react-native-elements@^0.18.5:
     lodash.times "^4.3.2"
     opencollective "^1.0.3"
     prop-types "^15.5.8"
+
+react-native-tab-navigator@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/react-native-tab-navigator/-/react-native-tab-navigator-0.3.4.tgz#54a18f1ad06a09d4a0de81ff00416bc1b760c960"
+  dependencies:
+    immutable "^3.8.1"
+    prop-types "^15.5.10"
 
 react-native-tab-view@^0.0.74:
   version "0.0.74"

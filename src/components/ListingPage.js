@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PageSelection from './PageSelection';
 import SimpleItem from './SimpleItem';
 import LoadedItem from './LoadedItem';
+import { mapStateItemToProps } from '../utils';
 
 function renderLoadingOverlay(){
   return (
@@ -14,7 +15,7 @@ function renderLoadingOverlay(){
 }
 
 function renderSingleListingItem(item){
-  if(!item.isError && (item.content || item.views))
+  if(!item.isLoading)
     return (
       <LoadedItem
         title={item.title}
@@ -95,12 +96,7 @@ const mapStateToProps = (state) => {
   const allItems =  { ...(news.items || []), ...(notices.items || []) };
   const items = Object.keys(allItems).map(key => {
     const item = allItems[key];
-
-    return {
-      id: item.id, title: item.title, date: item.date, views: item.hitCount, content: item.content,
-      href: item.href, thumb: item.thumb, images: [...(item.images || []), ...((item.extras || {}).images || [])],
-      files: [...((item.extras || {}).files || [])], isError: item.detail && item.detail.failed
-    };
+    return mapStateItemToProps(item);
   // TODO: could optimize the sort here aswell.
   }).sort((a, b) => a.date == b.date ? a.title.localeCompare(b.title) : a.date.localeCompare(b.date));
 

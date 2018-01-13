@@ -33,7 +33,7 @@ function createViewBadge(view){
   );
 }
 
-const SimpleItem = ({ title, date, views, isLoading, isError, onClick }) => {
+const SimpleItem = ({ title, date, views, isLoading, isError, hideChevron, hideAvatar, onClick }) => {
   const dateBadge = date ? createDateBadge(date) : null;
   const viewBadge = views ? createViewBadge(views) : null;
 
@@ -51,7 +51,8 @@ const SimpleItem = ({ title, date, views, isLoading, isError, onClick }) => {
       onPress={onClick}
       title={title}
       subtitle={subtitleView}
-      avatar={isError ? errorIcon() : isLoading ? loadingSpinner() : loadedIcon()}/>
+      hideChevron={hideChevron}
+      avatar={hideAvatar ? undefined : isError ? errorIcon() : isLoading ? loadingSpinner() : loadedIcon()}/>
   );
 };
 
