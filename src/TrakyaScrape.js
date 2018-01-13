@@ -12,6 +12,16 @@ function getDocumentFromURL(ajax, url){
 }
 
 /**
+ * Makes the given trakya edu date iso8601 if possible.
+ * @param date
+ */
+function parseDate(date){
+  const split = date.split('.');
+  if(split.length < 3) return date;
+  return `${split[2]}-${split[1]}-${split[0]}`
+}
+
+/**
  * Parses a single simple item, given its html object.
  * @param li the <li> html object of the simple item.
  * @return {{thumb: *|string, href: *, title, date}}
@@ -20,12 +30,13 @@ function parseNewsItem(li){
   const a = li.find('a').first();
   const href = a.attr('href');
   const thumb = href.match(/([^\/]*)\/*\??$/)[1];
+  const date = parseDate(li.find('div.date').first().text().trim());
 
   return {
     thumb,
     href,
     title: a.text(),
-    date: li.find('div.date').first().text()
+    date: date
   };
 }
 

@@ -117,7 +117,7 @@ const mapStateToProps = (state) => {
     const item = allItems[key];
     return mapStateItemToProps(item);
   // TODO: could optimize the sort here aswell.
-  }).sort((a, b) => a.date == b.date ? a.title.localeCompare(b.title) : a.date.localeCompare(b.date));
+  }).sort((a, b) => a.date == b.date ? a.title.localeCompare(b.title) : b.date.localeCompare(a.date));
 
   return { loading: false, items };
 };
