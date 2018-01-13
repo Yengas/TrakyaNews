@@ -47,6 +47,7 @@ class ListingPage extends Component{
           <FlatList
             data={items}
             keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={() => <View style={{ margin: 1 }}/>}
             renderItem={({ item }) => renderSingleListingItem(item)} />
         </View>
         <View style={styles.pageNav}>
@@ -98,7 +99,7 @@ const mapStateToProps = (state) => {
     return {
       id: item.id, title: item.title, date: item.date, views: item.hitCount, content: item.content,
       href: item.href, thumb: item.thumb, images: [...(item.images || []), ...((item.extras || {}).images || [])],
-      files: [...((item.extras || {}).files || [])], isError: item.detailed && item.detailed.failed
+      files: [...((item.extras || {}).files || [])], isError: item.detail && item.detail.failed
     };
   // TODO: could optimize the sort here aswell.
   }).sort((a, b) => a.date == b.date ? a.title.localeCompare(b.title) : a.date.localeCompare(b.date));
