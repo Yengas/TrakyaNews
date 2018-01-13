@@ -4,8 +4,8 @@ import ListingPage from './src/components/ListingPage';
 import DetailPage from './src/components/DetailPage';
 
 const Router = StackNavigator({
-  Listing: { screen: ListingPage },
-  Detail: { screen: DetailPage },
+  Listing: { screen: ListingPage, navigationOptions: () => ({ title: 'Listing'}) },
+  Detail: { screen: DetailPage, navigationOptions: () => ({ title: 'Details'}) },
 });
 
 export default Router;

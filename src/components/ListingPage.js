@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, Text, View, StyleSheet, FlatList } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PageSelection from './PageSelection';
 import SimpleItem from './SimpleItem';
 import LoadedItem from './LoadedItem';
 import { mapStateItemToProps } from '../utils';
-import { createPageChangeAction } from '../actions/index'
+import { createPageChangeAction, createDetailSelectedAction } from '../actions/index'
 
 function renderLoadingOverlay(){
   return (
@@ -15,7 +16,7 @@ function renderLoadingOverlay(){
   );
 }
 
-function renderSingleListingItem(item){
+function renderSingleListingItem(item, onClick){
   if(!item.isLoading)
     return (
       <LoadedItem
@@ -25,6 +26,7 @@ function renderSingleListingItem(item){
         content={item.content}
         images={item.images}
         files={item.files}
+        onClick={onClick}
         />
     );
   else
@@ -34,6 +36,7 @@ function renderSingleListingItem(item){
         date={item.date}
         isLoading={true}
         isError={item.isError}
+        onClick={onClick}
         />
     );
 }
@@ -47,6 +50,8 @@ class ListingPage extends Component{
 
   render(){
     const { loading, items } = this.props;
+    const { createPageChangeAction, createDetailSelectedAction, navigation } = this.props;
+    const navigateDetails = NavigationActions.navigate({ routeName: 'Detail' });
 
     return (
       <View style={styles.container}>
@@ -56,7 +61,14 @@ class ListingPage extends Component{
             data={items}
             keyExtractor={(item) => item.id}
             ItemSeparatorComponent={() => <View style={{ margin: 1 }}/>}
-            renderItem={({ item }) => renderSingleListingItem(item)} />
+            renderItem={({ item }) =>
+              renderSingleListingItem(
+                item,
+                () => {
+                  createDetailSelectedAction(item.id);
+                  navigation.dispatch(navigateDetails);
+                })
+            } />
         </View>
         <View style={styles.pageNav}>
           <PageSelection min={1} max={6} toShow={5} selected={3} pageChanged={(page) => console.log(page)} />
@@ -110,4 +122,4 @@ const mapStateToProps = (state) => {
   return { loading: false, items };
 };
 
-export default connect(mapStateToProps, { createPageChangeAction })(ListingPage);
+export default connect(mapStateToProps, { createPageChangeAction, createDetailSelectedAction })(ListingPage);

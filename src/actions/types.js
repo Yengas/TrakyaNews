@@ -1,5 +1,7 @@
 export const LISTING_PAGE_CHANGED = "listing_page_changed";
 
+export const DETAIL_SELECTED = "detail_selected";
+
 export const LOADING_NEWS_SIMPLE = "loading_news_simple";
 export const LOAD_NEWS_SIMPLE = "load_news_simple";
 export const NEWS_SIMPLE_FAILED = "load_news_simple_failed";
