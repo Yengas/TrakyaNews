@@ -1,3 +1,6 @@
+function mapImage(img){
+  return !img ? img : img.src ? img.src : img;
+}
 /**
  * Maps the given state item to props object.
  * @param item
@@ -8,7 +11,7 @@ export function mapStateItemToProps(item){
 
   return {
     id: item.id, title: item.title, date: item.date, views: item.hitCount, content: item.content,
-    href: item.href, thumb: item.thumb, images: [...(item.images || []), ...((item.extras || {}).images || [])],
+    href: item.href, thumb: item.thumb, images: [...(item.images || []), ...((item.extras || {}).images || [])].map(mapImage),
     files: [...((item.extras || {}).files || [])],
     isError: isError, errorReason: isError ? item.detail.reason : null, isLoading: !isError && !item.content && !item.views,
   };

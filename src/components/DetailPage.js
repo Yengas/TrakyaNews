@@ -58,6 +58,7 @@ class DetailPage extends Component{
       <View style={styles.containerStyle}>
         <SimpleItem
           title={title}
+          titleLines={3}
           views={views}
           date={date}
           hideAvatar={true}

@@ -13,7 +13,7 @@ const ImageSection = ({ images }) => (
       data={images}
       keyExtractor={(item) => item.src}
       numColumns={3}
-      renderItem={({ item }) => <ImageBox uri={item.src} />}
+      renderItem={({ item: uri }) => <ImageBox uri={uri} />}
       style={styles.flatListStyle} />
   </View>
 );

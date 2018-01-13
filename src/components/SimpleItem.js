@@ -33,7 +33,7 @@ function createViewBadge(view){
   );
 }
 
-const SimpleItem = ({ title, date, views, isLoading, isError, hideChevron, hideAvatar, onClick }) => {
+const SimpleItem = ({ title, date, views, isLoading, isError, titleLines, hideChevron, hideAvatar, onClick }) => {
   const dateBadge = date ? createDateBadge(date) : null;
   const viewBadge = views ? createViewBadge(views) : null;
 
@@ -50,6 +50,7 @@ const SimpleItem = ({ title, date, views, isLoading, isError, hideChevron, hideA
       overlayColor={'grey'}
       onPress={onClick}
       title={title}
+      titleNumberOfLines={titleLines}
       subtitle={subtitleView}
       hideChevron={hideChevron}
       avatar={hideAvatar ? undefined : isError ? errorIcon() : isLoading ? loadingSpinner() : loadedIcon()}/>
