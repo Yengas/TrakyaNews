@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import { mapStateItemToProps} from "../utils";
 import TabNavigator from 'react-native-tab-navigator';
-import SimpleItem from "./SimpleItem";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import SimpleItem from './SimpleItem';
+import ContentSection from './ContentSection';
+import ImageSection from './ImageSection';
 
 const loadingBottom = () => (
   <View style={styles.loadingContainerStyle}>
@@ -22,22 +24,21 @@ const errorBottom = (reason) => (
 const createTabItem = (name, iconName, selectedName, onClick, children) => (
   <TabNavigator.Item
       selected={name === selectedName}
-      style={{ top: 50 }}
       onPress={() => onClick(name)}
       renderIcon={() => <Icon name={iconName} size={16} />}
-      title={name}>{children}</TabNavigator.Item>
+      title={name}><View style={{ top: 50, flex: 1 }}>{children}</View></TabNavigator.Item>
 );
 
 const bottomNavBar = (selectedName, onClick, contentSection, imageSection, fileSection) => (
-  <TabNavigator tabBarStyle={{ top: 0 }} style={{ marginBottom: -50 }}>
+  <TabNavigator tabBarStyle={[{ top: 0 }, styles.tabBarStyle]} style={{ marginBottom: -50 }}>
     { contentSection ? createTabItem("Content", "book", selectedName, onClick, contentSection) : null }
     { imageSection ? createTabItem("Images", "camera", selectedName, onClick, imageSection) : null }
     { fileSection ? createTabItem("Files", "files-o", selectedName, onClick, fileSection) : null }
   </TabNavigator>
 );
 
-const createContentSection = (content) => (<View />);
-const createImageSection = (images) => (<View />);
+const createContentSection = (content) => (<ContentSection content={content} />);
+const createImageSection = (images) => (<ImageSection images={images} />);
 const createFileSection = (files) => (<View />);
 
 class DetailPage extends Component{
@@ -106,6 +107,9 @@ const styles = StyleSheet.create({
   },
   errorReasonStyle: {
 
+  },
+  tabBarStyle: {
+    backgroundColor: 'white'
   }
 });
 
