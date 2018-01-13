@@ -7,6 +7,7 @@ import TabNavigator from 'react-native-tab-navigator';
 import SimpleItem from './SimpleItem';
 import ContentSection from './ContentSection';
 import ImageSection from './ImageSection';
+import FileSection from './FileSection';
 
 const loadingBottom = () => (
   <View style={styles.loadingContainerStyle}>
@@ -26,7 +27,7 @@ const createTabItem = (name, iconName, selectedName, onClick, children) => (
       selected={name === selectedName}
       onPress={() => onClick(name)}
       renderIcon={() => <Icon name={iconName} size={16} />}
-      title={name}><View style={{ top: 50, flex: 1 }}>{children}</View></TabNavigator.Item>
+      title={name}><View style={{ marginTop: 50, flex: 1 }}>{children}</View></TabNavigator.Item>
 );
 
 const bottomNavBar = (selectedName, onClick, contentSection, imageSection, fileSection) => (
@@ -39,7 +40,7 @@ const bottomNavBar = (selectedName, onClick, contentSection, imageSection, fileS
 
 const createContentSection = (content) => (<ContentSection content={content} />);
 const createImageSection = (images) => (<ImageSection images={images} />);
-const createFileSection = (files) => (<View />);
+const createFileSection = (files) => (<FileSection files={files} />);
 
 class DetailPage extends Component{
   constructor(props){

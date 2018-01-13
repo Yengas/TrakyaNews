@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Divider } from 'react-native-elements';
 
 function inferType(name){
   const extension = name.split('.').pop().trim();
@@ -21,14 +22,27 @@ function inferType(name){
   return null;
 }
 
-const FileThumb = ({ downloadURL, size, fileSize, title }) => {
+
+
+const FileThumb = ({ downloadURL, size, fileSize, title, large }) => {
   const inferred = inferType(title);
 
-  return (
-    <View>
-      <Icon style={styles.iconStyle} size={size} name={`file${inferred ? '-' + inferred : ''}-o`} />
-    </View>
-  );
+  if(large)
+    return (
+      <View style={styles.largeContainerStyle}>
+        <Text style={styles.largeTitleStyle}>{title}</Text>
+        <Divider />
+        <Icon style={styles.iconStyle} size={size} name={`file${inferred ? '-' + inferred : ''}-o`} />
+        <Divider />
+        <Text style={styles.largeSizeStyle}>{fileSize}</Text>
+      </View>
+    );
+  else
+    return (
+      <View>
+        <Icon style={styles.iconStyle} size={size} name={`file${inferred ? '-' + inferred : ''}-o`} />
+      </View>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -38,6 +52,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'space-between'
+  },
+  largeContainerStyle: {
+    flex: 1,
+    alignItems: 'center',
+    marginBottom: 5
+  },
+  largeTitleStyle: {
+    textAlign: 'center'
+  },
+  largeSizeStyle: {
+    textAlign: 'right'
   },
   sizeTextStyle: {
 
