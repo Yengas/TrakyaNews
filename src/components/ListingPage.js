@@ -49,7 +49,7 @@ class ListingPage extends Component{
   }
 
   render(){
-    const { loading, items } = this.props;
+    const { loading, selectedPage, maxPage, items } = this.props;
     const { createPageChangeAction, createDetailSelectedAction, navigation } = this.props;
     const navigateDetails = NavigationActions.navigate({ routeName: 'Detail' });
 
@@ -71,7 +71,7 @@ class ListingPage extends Component{
             } />
         </View>
         <View style={styles.pageNav}>
-          <PageSelection min={1} max={6} toShow={5} selected={3} pageChanged={(page) => console.log(page)} />
+          <PageSelection min={1} max={maxPage} toShow={5} selected={selectedPage} pageChanged={(page) => createPageChangeAction(page)} />
         </View>
       </View>
     );
@@ -119,7 +119,12 @@ const mapStateToProps = (state) => {
   // TODO: could optimize the sort here aswell.
   }).sort((a, b) => a.date == b.date ? a.title.localeCompare(b.title) : b.date.localeCompare(a.date));
 
-  return { loading: false, items };
+  return {
+    loading: false,
+    selectedPage: listing.page,
+    maxPage: Math.max(news.maxPage || 1, notices.maxPage || 1),
+    items
+  };
 };
 
 export default connect(mapStateToProps, { createPageChangeAction, createDetailSelectedAction })(ListingPage);

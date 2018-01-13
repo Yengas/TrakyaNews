@@ -46,10 +46,13 @@ function parseNewsItem(li){
  * @return {Observable<any>}
  */
 function parseNewsPage($){
+  const pages = $(".pages > li > a");
+  const maxPage = (pages && pages.length > 2) ? parseInt(pages.eq(pages.length - 2).text()) : 0;
+
   // TODO: should move parsing of items into observable...
-  return Observable.from($("ul.news_list > li")
+  return Observable.of($("ul.news_list > li")
     .map(function(){ return parseNewsItem($(this)); })
-    .toArray());
+    .toArray()).map((items) => ({ maxPage, items }));
 }
 
 /**
@@ -184,7 +187,8 @@ export default class TrakyaScrape{
 
     return getDocumentFromURL(this.ajax, url)
       .mergeMap(parseNewsPage)
-      .map(createSimpleIdGenerator('h-'));
+      // TODO: could optimize by doing the map before this part.
+      .map(({ maxPage, items }) => ({ maxPage, items: items.map(createSimpleIdGenerator('h-')) }));
   }
 
   notices(page){
@@ -192,7 +196,8 @@ export default class TrakyaScrape{
 
     return getDocumentFromURL(this.ajax, url)
       .mergeMap(parseNewsPage)
-      .map(createSimpleIdGenerator('d-'));
+      // TODO: could optimize by doing the map before this part.
+      .map(({ maxPage, items }) => ({ maxPage, items: items.map(createSimpleIdGenerator('d-')) }));
   }
 
   single(path){

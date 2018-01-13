@@ -12,7 +12,7 @@ export default (state = {}, action) => {
     case LOADING_NEWS_SIMPLE:
       return { loading: true };
     case LOAD_NEWS_SIMPLE:
-      return { loading: false, items: action.news };
+      return { loading: false, items: action.news.items, maxPage: action.news.maxPage };
     case LOAD_NEWS_DETAILED:
       return { ...state, items: { ...state.items, [ action.news.id ]: { ...state.items[action.news.id], ...action.news } } };
     case NEWS_SIMPLE_FAILED:

@@ -26,9 +26,10 @@ export const createNewsLoadingStartEpic = (newsRequest) => (action$) =>
   action$.pipe(
     ofType(LOADING_NEWS_SIMPLE),
     flatMap(({ page }) =>
-      newsRequest(page).toArray()
+      newsRequest(page)
           .takeUntil(action$.ofType(LOADING_NEWS_SIMPLE))
-          .map(news => createNewsSimpleLoadedAction(mapToObjWithProp(news, 'id')))
+          // TODO: could optimize by changing the parsing schema
+          .map(({ items, maxPage }) => createNewsSimpleLoadedAction({ maxPage, items: mapToObjWithProp(items, 'id') }))
           .catch((e) => Rx.Observable.of(createNewsSimpleFailedAction(e.message)))
     )
   );
@@ -37,9 +38,10 @@ export const createNoticesLoadingStartEpic = (noticesRequest) => (action$) =>
   action$.pipe(
     ofType(LOADING_NOTICES_SIMPLE),
     flatMap(({ page }) =>
-      noticesRequest(page).toArray()
+      noticesRequest(page)
         .takeUntil(action$.ofType(LOADING_NOTICES_SIMPLE))
-        .map(notices => createNoticesLoadedSimpleAction(mapToObjWithProp(notices, 'id')))
+        // TODO: could optimize by changing the parsing schema
+        .map(({ items, maxPage}) => createNoticesLoadedSimpleAction({ maxPage, items: mapToObjWithProp(items, 'id') }))
         .catch((e) => Rx.Observable.of(createNoticesSimpleFailedAction(e.message))))
   );
 
@@ -63,14 +65,14 @@ export function createDetailLoadingEpic(requestSingleItem, concurrency, type, it
 
 export const startNewsDetailLoadingEpic = (requestSingleItem, concurrency) =>
   createDetailLoadingEpic(
-    requestSingleItem, concurrency, LOAD_NEWS_SIMPLE, (action) => Object.values(action.news),
+    requestSingleItem, concurrency, LOAD_NEWS_SIMPLE, (action) => Object.values(action.news.items),
     createNewsDetailLoadedAction, (item, e) => createNewsDetailedFailedAction(item, e.message),
     LOADING_NEWS_SIMPLE
   );
 
 export const startNoticesDetailLoadingEpic = (requestSingleItem, concurrency) =>
   createDetailLoadingEpic(
-    requestSingleItem, concurrency, LOAD_NOTICES_SIMPLE, (action) => Object.values(action.notices),
+    requestSingleItem, concurrency, LOAD_NOTICES_SIMPLE, (action) => Object.values(action.notices.items),
     createNoticeLoadedDeatiledAction, (item, e) => createNoticeDetailedFailedAction(item, e.message),
     LOADING_NOTICES_SIMPLE
   );
