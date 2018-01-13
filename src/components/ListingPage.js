@@ -5,6 +5,7 @@ import PageSelection from './PageSelection';
 import SimpleItem from './SimpleItem';
 import LoadedItem from './LoadedItem';
 import { mapStateItemToProps } from '../utils';
+import { createPageChangeAction } from '../actions/index'
 
 function renderLoadingOverlay(){
   return (
@@ -38,6 +39,12 @@ function renderSingleListingItem(item){
 }
 
 class ListingPage extends Component{
+  componentWillMount(){
+    const { createPageChangeAction } = this.props;
+
+    createPageChangeAction(1);
+  }
+
   render(){
     const { loading, items } = this.props;
 
@@ -103,4 +110,4 @@ const mapStateToProps = (state) => {
   return { loading: false, items };
 };
 
-export default connect(mapStateToProps, {})(ListingPage);
+export default connect(mapStateToProps, { createPageChangeAction })(ListingPage);

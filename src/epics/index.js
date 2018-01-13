@@ -12,12 +12,13 @@ import {
   createPageLoadingAction, createNoticesSimpleFailedAction, createNewsSimpleFailedAction,
   createNoticeDetailedFailedAction, createNewsDetailedFailedAction
 } from "../actions";
+import { mapToObjWithProp } from '../utils'
 
 export const createPageLoadingStartEpic = (action$, store) =>
   action$.pipe(
     ofType(LISTING_PAGE_CHANGED),
     // Check if the page really changed or is it the same with the store
-    filter(({ page: newPage }) => newPage !== ((store.getState().listing || {}).page || 0)),
+    //filter(({ page: newPage }) => newPage !== ((store.getState().listing || {}).page || 0)),
     flatMap(({ page }) => Rx.Observable.from([ createNewsSimpleLoadingAction(page), createNoticesLoadingSimpleAction(page) ]))
   );
 
@@ -27,7 +28,7 @@ export const createNewsLoadingStartEpic = (newsRequest) => (action$) =>
     flatMap(({ page }) =>
       newsRequest(page).toArray()
           .takeUntil(action$.ofType(LOADING_NEWS_SIMPLE))
-          .map(news => createNewsSimpleLoadedAction(news))
+          .map(news => createNewsSimpleLoadedAction(mapToObjWithProp(news, 'id')))
           .catch((e) => Rx.Observable.of(createNewsSimpleFailedAction(e.message)))
     )
   );
@@ -38,7 +39,7 @@ export const createNoticesLoadingStartEpic = (noticesRequest) => (action$) =>
     flatMap(({ page }) =>
       noticesRequest(page).toArray()
         .takeUntil(action$.ofType(LOADING_NOTICES_SIMPLE))
-        .map(notices => createNoticesLoadedSimpleAction(notices))
+        .map(notices => createNoticesLoadedSimpleAction(mapToObjWithProp(notices, 'id')))
         .catch((e) => Rx.Observable.of(createNoticesSimpleFailedAction(e.message))))
   );
 
@@ -52,7 +53,7 @@ export function createDetailLoadingEpic(requestSingleItem, concurrency, type, it
           .flatMap((item) =>
             // Request single item, and in case error create an error for it.
             requestSingleItem(item)
-              .map(actionCreator)
+              .map((result) => actionCreator({ id: item.id, ...result }))
               .catch((e) => Rx.Observable.of(errorCreator(item, e)))
             , undefined, concurrency)
           .takeUntil(action$.ofType(takeUntilActionType))
@@ -62,14 +63,14 @@ export function createDetailLoadingEpic(requestSingleItem, concurrency, type, it
 
 export const startNewsDetailLoadingEpic = (requestSingleItem, concurrency) =>
   createDetailLoadingEpic(
-    requestSingleItem, concurrency, LOAD_NEWS_SIMPLE, (action) => action.news,
+    requestSingleItem, concurrency, LOAD_NEWS_SIMPLE, (action) => Object.values(action.news),
     createNewsDetailLoadedAction, (item, e) => createNewsDetailedFailedAction(item, e.message),
     LOADING_NEWS_SIMPLE
   );
 
 export const startNoticesDetailLoadingEpic = (requestSingleItem, concurrency) =>
   createDetailLoadingEpic(
-    requestSingleItem, concurrency, LOAD_NOTICES_SIMPLE, (action) => action.notices,
+    requestSingleItem, concurrency, LOAD_NOTICES_SIMPLE, (action) => Object.values(action.notices),
     createNoticeLoadedDeatiledAction, (item, e) => createNoticeDetailedFailedAction(item, e.message),
     LOADING_NOTICES_SIMPLE
   );

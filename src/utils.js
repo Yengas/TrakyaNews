@@ -16,3 +16,7 @@ export function mapStateItemToProps(item){
     isError: isError, errorReason: isError ? item.detail.reason : null, isLoading: !isError && !item.content && !item.views,
   };
 }
+
+export function mapToObjWithProp(items, prop){
+  return items.reduce((curr, item) => { curr[item[prop]] = item; return curr; }, {});
+}

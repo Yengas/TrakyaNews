@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs/Rx'
-import cheerio from 'cheerio'
+import cheerio from 'cheerio-without-node-native'
 
 function createURL(domain, path){
   return `http://${domain}${path}`;
@@ -7,7 +7,7 @@ function createURL(domain, path){
 
 // Given an ajax instance, and a url creates a get request that returns html.
 function getDocumentFromURL(ajax, url){
-  return ajax({ url, responseType: 'document' })
+  return ajax({ url, responseType: 'text' })
     .map(e => cheerio.load(e.response));
 }
 

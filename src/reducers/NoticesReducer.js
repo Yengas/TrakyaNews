@@ -14,7 +14,7 @@ export default (state = {}, action) => {
     case LOAD_NOTICES_SIMPLE:
       return { loading: false, items: action.notices };
     case LOAD_NOTICE_DETAILED:
-      return { ...state, items: { ...state.items, [action.notice.id]: action.notice }};
+      return { ...state, items: { ...state.items, [action.notice.id]: { ...state.items[action.notice.id], ...action.notice } }};
     case NOTICES_SIMPLE_FAILED:
       return { loading: false, failed: true, reason: action.reason };
     case NOTICES_DETAILED_FAILED:
