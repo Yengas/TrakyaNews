@@ -81,6 +81,6 @@ export default (scraper) => combineEpics(
   createPageLoadingStartEpic,
   createNewsLoadingStartEpic((page) => scraper.news(page)),
   createNoticesLoadingStartEpic((page) => scraper.notices(page)),
-  startNewsDetailLoadingEpic((newsItem) => scraper.single(newsItem.href), 3),
-  startNoticesDetailLoadingEpic((noticeItem) => scraper.single(noticeItem.href), 5)
+  startNewsDetailLoadingEpic((newsItem) => scraper.single(newsItem.href), 1),
+  startNoticesDetailLoadingEpic((noticeItem) => scraper.single(noticeItem.href), 1)
 );
